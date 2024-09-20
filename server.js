@@ -1,13 +1,21 @@
 const { createServer } = require("http")
 const { Server } = require('socket.io')
 const websocketRoutes = require('./websocket');
+const express = require("express");
+const cors = require("cors")
 
-const httpServer = createServer()
+const app = express()
+app.use(cors())
+const httpServer = createServer(app)
 const socket = new Server(httpServer, {
   cors: {
-    origin: "http://127.0.0.1:5500"
+    origin: "*"
   }
 })
+
+app.get('/', (req, res) => {
+  res.send('Hello from Express with Socket.IO!');
+});
 
 websocketRoutes(socket);
 
