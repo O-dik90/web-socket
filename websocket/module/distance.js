@@ -1,6 +1,6 @@
-const distance = (socket) => {
-  socket.on('connection', socket => {
-    console.log("Connect to Distance")
+const distance = (io) => {
+  io.on('connection', (socket) => {
+    console.log(`connect to socket: ${socket.id}`)
   })
 }
 
