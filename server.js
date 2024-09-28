@@ -4,6 +4,7 @@ const websocketRoutes = require('./websocket');
 const express = require("express");
 const cors = require("cors")
 
+
 const app = express()
 app.use(cors())
 const httpServer = createServer(app)
@@ -15,20 +16,34 @@ const io = new Server(httpServer, {
 
 app.get('/', (req, res) => {
   res.send('Hello from Express with Socket.IO!');
-  debugger
+});
+
+// Serve latest device data via HTTP
+app.get('/api/device/:deviceId/data', (req, res) => {
+  const { deviceId } = req.params;
+  if (deviceData[deviceId]) {
+    res.json({ deviceId, data: deviceData[deviceId] });
+  } else {
+    res.status(404).json({ message: `No data available for device ${deviceId}` });
+  }
+});
+
+app.get('/api/devices/data', (req, res) => {
+  res.json(deviceData);
 });
 
 websocketRoutes(io);
 
 io.on("connection", (socket) => {
   console.log('Welcome ', socket.id)
-  
+
   io.on('message', (message) => {
     console.log(`get new data ${message}`)
-    
-    io.send('Message received:'+ message)
+
+    io.send('Message received:' + message)
   })
-  ws.on('close', () => {
+  
+  io.on('close', () => {
     console.log('Client disconnected')
   })
 })
